@@ -22,7 +22,7 @@
 #ifndef _PORT_H
 #define _PORT_H
 
-#include <stm32f10x_conf.h>
+#include <stm32f4xx_conf.h>
 #include "mbconfig.h"
 #include <rthw.h>
 #include <rtthread.h>

@@ -528,7 +528,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             {
                 ch = serial->ops->getc(serial);
                 if (ch == -1) break;
-
+								
+								//rt_kprintf("%c",ch);		// line only for test uart2 for GPS receive
 
                 /* disable interrupt */
                 level = rt_hw_interrupt_disable();

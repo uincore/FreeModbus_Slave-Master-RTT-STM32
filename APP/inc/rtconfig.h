@@ -59,6 +59,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+
 // <bool name="RT_USING_DEVICE_IPC" description="Using device communication" default="true" />
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
@@ -68,6 +69,10 @@
 #define RT_USING_PIN
 
 /* SECTION: Console options */
+#define RT_USING_CONSOLE
+
+#define CONSOLE_DEVICE	"uart6" 
+
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
@@ -76,6 +81,5 @@
 /* Using symbol table */
 //#define FINSH_USING_SYMTAB
 //#define FINSH_USING_DESCRIPTION
-
 
 #endif

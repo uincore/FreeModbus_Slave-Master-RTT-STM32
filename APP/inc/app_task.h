@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <rthw.h>	
 #include <rtthread.h>
-#include <stm32f10x_conf.h>
+#include <stm32f4xx_conf.h>
 #include "bsp.h"
 #include "delay_conf.h"
 #include "cpuusage.h"

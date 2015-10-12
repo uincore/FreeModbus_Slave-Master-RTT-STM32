@@ -60,20 +60,9 @@ void rt_hw_board_init()
 *******************************************************************************/
 static void RCC_Configuration(void)
 {
-    //下面是给各模块开启时钟
-    //启动GPIO
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | \
-                           RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | \
-						   RCC_APB2Periph_GPIOE ,
-                           ENABLE);
-    //启动AFIO
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-	//配置ADC转换时钟
-	RCC_ADCCLKConfig(RCC_PCLK2_Div8); //9M
-    //启动DMA时钟
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);//使能DMA时钟
-	/* Enable ADC1 and GPIOC clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 , ENABLE);
+    /* GPIOD Periph clock enable */
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOE, ENABLE);
+
 }
 
 /*******************************************************************************
@@ -85,7 +74,7 @@ static void RCC_Configuration(void)
 *******************************************************************************/
 static void NVIC_Configuration(void)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
+//    NVIC_InitTypeDef NVIC_InitStructure;
 
 #ifdef  VECT_TAB_RAM
     // Set the Vector Table base location at 0x20000000
@@ -94,6 +83,8 @@ static void NVIC_Configuration(void)
     // Set the Vector Table base location at 0x08000000
     NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	
 }
 /*******************************************************************************
 * Function Name  : GPIO_Configuration
@@ -104,24 +95,23 @@ static void NVIC_Configuration(void)
 *******************************************************************************/
 static void GPIO_Configuration(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/***************数字输出IO初始化*********************/
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_11 | GPIO_Pin_12;  //继电器1  LED1  LED2
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_14 | GPIO_Pin_15;  //蜂鸣器 继电器3   继电器2
-    GPIO_Init(GPIOB, &GPIO_InitStructure); 
-
-	/*************数字输入IO初始化*********************/	
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;  
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_6;
-	GPIO_Init(GPIOG, &GPIO_InitStructure);
+		GPIO_InitTypeDef GPIO_InitStructure;
+    
+		/* Configure PD12, PD13, PD14 and PD15 in output pushpull mode */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOD, &GPIO_InitStructure);	
+	
+    /* Configure PE14 and PE15 in input mode */
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_14| GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOE, &GPIO_InitStructure);	
 
 }
 
@@ -190,6 +180,10 @@ void rt_hw_timer_handler(void)
 	rt_interrupt_leave();
 }
 
+void SysTick_Handler(void)
+{
+	rt_hw_timer_handler();
+}
 /*
 *********************************************************************************************************
 *                                     LOCAL CONFIGURATION ERRORS

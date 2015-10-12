@@ -319,6 +319,7 @@ xMBMasterRTUTransmitFSM( void )
             xMBMasterPortSerialPutByte( ( CHAR )*pucMasterSndBufferCur );
             pucMasterSndBufferCur++;  /* next byte in sendbuffer. */
             usMasterSndBufferCount--;
+					rt_kprintf("%02x ",*pucMasterSndBufferCur);
         }
         else
         {

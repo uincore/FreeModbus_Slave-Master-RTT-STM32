@@ -29,8 +29,14 @@ struct pin_index
 
 static const struct pin_index pins[] =
 {
-    { 0, RCC_APB2Periph_GPIOA, GPIOA, GPIO_Pin_1},
-    { 1, RCC_APB2Periph_GPIOB, GPIOB, GPIO_Pin_1},
+    { 0, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_14},		//Wakeup Input1
+    { 1, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_15},		//Wakeup Input2
+    { 2, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_12},  	//Power Control
+    { 3, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_1},		//RS485 Control
+    { 4, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_13},		//LED1
+    { 5, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_14},		//LED2
+    { 6, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_15},		//LED3
+
 };
 
 #define ITEM_NUM(items) sizeof(items)/sizeof(items[0])
@@ -107,31 +113,34 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 
     /* GPIO Periph clock enable */
-    RCC_APB2PeriphClockCmd(index->rcc, ENABLE);
+    RCC_AHB1PeriphClockCmd(index->rcc, ENABLE);
 
     /* Configure GPIO_InitStructure */
     GPIO_InitStructure.GPIO_Pin     = index->pin;
     GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;			// zzz
+    GPIO_InitStructure.GPIO_PuPd 		= GPIO_PuPd_NOPULL;		// zzz
 
     if (mode == PIN_MODE_OUTPUT)
     {
         /* output setting */
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     }
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     }
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;			// zzz
+        GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     }
     else
     {
         /* input setting:default. */
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     }
     GPIO_Init(index->gpio, &GPIO_InitStructure);
 }

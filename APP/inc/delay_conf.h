@@ -36,8 +36,10 @@
 
 #endif
 
-#define DELAY_SYS_RUN_LED			DELAY_MS(500)
+#define DELAY_SYS_RUN_LED			DELAY_MS(25)
 #define DELAY_SYS_SLEEP_LED			DELAY_MS(1000)
+
+#define DELAY_MODBUS_CTRL			DELAY_MS(100)
 
 #endif  
 
